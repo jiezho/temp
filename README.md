@@ -1,6 +1,6 @@
-# vue-admin-flask-example
+# rdkx
 
->[vue-admin](https://github.com/taylorchen709/vue-admin)和flask前后端分离的小例子
+>润电科学-设备健康检查-软件平台
 
 ## 本地预览
 
@@ -19,21 +19,21 @@ docker-compose up -d
 >依此按照下面命令
 
 ```
-D:\Github\vue-admin-flask-example
+D:\Github\rdkx
 $ npm install
-D:\Github\vue-admin-flask-example
+D:\Github\rdkx
 $ virtualenv venv
 
 //进入venv\Scripts目录
-D:\Github\vue-admin-flask-example\venv\Scripts
+D:\Github\rdkx\venv\Scripts
 $ activate
-D:\Github\vue-admin-flask-example
+D:\Github\rdkx
 (venv) $ pip install -r requirements.txt
-D:\Github\vue-admin-flask-example
+D:\Github\rdkx
 (venv) $ python manage.py
 
 //开启另一个终端(或者像上一个方式直接打开/dist/index.html)
-D:\Github\vue-admin-flask-example
+D:\Github\rdkx
 $ npm run dev
 ```
 >等待浏览器打开 http://localhost:8080

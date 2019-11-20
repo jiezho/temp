@@ -21,7 +21,7 @@ let routes = [
     {
         path: '/',
         component: Home,
-        name: 'Table',
+        name: '',
         leaf: true,//只有一个节点
         iconCls: 'fa fa-area-chart',//图标样式class
         children: [
@@ -31,7 +31,7 @@ let routes = [
     {
         path: '/',
         component: Home,
-        name: 'Charts',
+        name: '',
         leaf: true,
         iconCls: 'fa fa-calendar',
         children: [
