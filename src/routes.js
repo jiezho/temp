@@ -23,9 +23,9 @@ let routes = [
         component: Home,
         name: 'Table',
         leaf: true,//只有一个节点
-        iconCls: 'fa fa-id-card-o',//图标样式class
+        iconCls: 'fa fa-area-chart',//图标样式class
         children: [
-            { path: '/table', component: Table, name: '信息汇总' },
+            { path: '/table', component: Table, name: '实时告警' },
         ]
     },
     {
@@ -33,9 +33,9 @@ let routes = [
         component: Home,
         name: 'Charts',
         leaf: true,
-        iconCls: 'fa fa-bar-chart',
+        iconCls: 'fa fa-calendar',
         children: [
-            { path: '/echarts', component: echarts, name: '图表展示' }
+            { path: '/echarts', component: echarts, name: '历史查询' }
         ]
     },
     {

@@ -57,7 +57,7 @@
 							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
 								{{ item.name }}
 							</el-breadcrumb-item>
-						</el-breadcrumb>
+						</el-breadcrumb> 
 					</el-col>
 					<el-col :span="24" class="content-wrapper">
 						<transition name="fade" mode="out-in">
@@ -116,7 +116,7 @@ export default {
       }
     };
     return {
-      sysName: "vueadmin",
+      sysName: "空预器堵塞监测",
       collapsed: false,
       sysUserName: "",
       form: {
