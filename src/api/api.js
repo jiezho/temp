@@ -34,3 +34,18 @@ export const getdrawPieChart = () => {
 export const getdrawLineChart = () => {
     return axios.get(`${base}/getdrawLineChart`);
 };
+
+// export const getdrawLineChartBlock = () => {
+//     return axios.get(`${base}/getdrawLineChartBlock`);
+//     //todo
+// };
+
+// export const getdrawLineChartBlock = () => {
+//     return axios.get(`${base}/getdrawLineChartSpurtNH3`);
+//     //todo
+// };
+
+// export const getdrawLineChartBlock = () => {
+//     return axios.get(`${base}/getdrawLineChartDeposition`);
+//     //todo
+// };

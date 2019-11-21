@@ -26,26 +26,33 @@ app.config['SECRET_KEY'] = 'hard to guess string'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_RECORD_QUERIES'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
-    os.path.join(basedir, 'data.sqlite')
-
+# 配置不变: 后期可以放在配置文件中
+HOSTNAME = 'localhost'
+PORT = '3306'
+DATABASE = 'rdkx'
+USERNAME = 'root'
+PASSWORD = '000000'
+DB_URI = "mysql+pymysql://{}:{}@{}:{}/{}".format(USERNAME, PASSWORD, HOSTNAME, PORT, DATABASE)
+ 
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
 db = SQLAlchemy(app)
+
 auth = HTTPBasicAuth()
 CSRF_ENABLED = True
 app.debug = True
 
-
+# 创建导入的数据数据库模型
 class JoinInfos(db.Model):
     __tablename__ = 'joininfos'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True)
-    phone = db.Column(db.String(30))
-    profess = db.Column(db.String(64))
-    grade = db.Column(db.String(64))
-    email = db.Column(db.String(120), index=True)
-    group = db.Column(db.String(64))
-    power = db.Column(db.Text(2000))
-    pub_date = db.Column(db.DateTime, default=datetime.now())
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(200), index=True)
+    groupA = db.Column(db.Integer)
+    groupB = db.Column(db.Integer)
+    unit = db.Column(db.String(64))
+    # pub_date = db.Column(db.DateTime, default=datetime.now())
+
+    def __repr__(self):
+        return "<JoinInfos:%s>"%self.name
 
     def to_dict(self):
         columns = self.__table__.columns.keys()
@@ -58,7 +65,7 @@ class JoinInfos(db.Model):
             result[key] = value
         return result
 
-
+# ‘登录用户’数据库模型
 class Admin(db.Model):
     __tablename__ = 'admins'
     id = db.Column(db.Integer, primary_key=True)
@@ -73,7 +80,7 @@ class Admin(db.Model):
     def verify_password(self, password):
         return custom_app_context.verify(password, self.password)
 
-    # 获取token，有效时间10min
+    # 获取token，有效时间100min
     def generate_auth_token(self, expiration=600):
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'id': self.id})
@@ -89,17 +96,26 @@ class Admin(db.Model):
         except BadSignature:
             return None  # invalid token
         admin = Admin.query.get(data['id'])
+        print('admin=',admin)
         return admin
 
+# 将模型映射到数据库中
+db.drop_all()
+db.create_all()
 
+# 密码校验
 @auth.verify_password
 def verify_password(name_or_token, password):
+    print('进入verify_password')
     if not name_or_token:
+        print('not name_or_token')
         return False
     name_or_token = re.sub(r'^"|"$', '', name_or_token)
     admin = Admin.verify_auth_token(name_or_token)
+    print(admin)
     if not admin:
         admin = Admin.query.filter_by(name=name_or_token).first()
+        print('not admin',admin)
         if not admin or not admin.verify_password(password):
             return False
     g.admin = admin
@@ -110,6 +126,7 @@ def verify_password(name_or_token, password):
 @auth.login_required
 def get_auth_token():
     token = g.admin.generate_auth_token()
+    # return jsonify({'code': 200, 'msg': "登录成功", 'token': token.decode('ascii'), 'name': g.admin.name})
     return jsonify({'code': 200, 'msg': "登录成功", 'token': token.decode('ascii'), 'name': g.admin.name})
 
 
@@ -128,7 +145,7 @@ def set_auth_pwd():
 @app.route('/api/users/listpage', methods=['GET'])
 @auth.login_required
 def get_user_list():
-    page_size = 4
+    page_size = 8
     page = request.args.get('page', 1, type=int)
     name = request.args.get('name', '')
     query = db.session.query
