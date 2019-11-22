@@ -82,27 +82,40 @@ class Admin(db.Model):
     @staticmethod
     def verify_auth_token(token):
         s = Serializer(app.config['SECRET_KEY'])
+        print('s',s)
         try:
+            print('看看进try没')
             data = s.loads(token)
+            print('token',token)
+            print('data',data)
         except SignatureExpired:
+            print('SignatureExpired')
             return None  # valid token, but expired
         except BadSignature:
+            print('BadSignature')
             return None  # invalid token
         admin = Admin.query.get(data['id'])
+        print(admin)
         return admin
 
 
 @auth.verify_password
 def verify_password(name_or_token, password):
+    print('进入verify_password')
     if not name_or_token:
+        print('not name_or_token')
         return False
     name_or_token = re.sub(r'^"|"$', '', name_or_token)
+    print('name_or_token',name_or_token)
     admin = Admin.verify_auth_token(name_or_token)
+    print(admin)
     if not admin:
         admin = Admin.query.filter_by(name=name_or_token).first()
+        print('not admin',admin)
         if not admin or not admin.verify_password(password):
             return False
     g.admin = admin
+    print(g.admin)
     return True
 
 
@@ -110,6 +123,8 @@ def verify_password(name_or_token, password):
 @auth.login_required
 def get_auth_token():
     token = g.admin.generate_auth_token()
+    print('token',token)
+    # return jsonify({'code': 200, 'msg': "登录成功", 'token': token.decode('ascii'), 'name': g.admin.name})
     return jsonify({'code': 200, 'msg': "登录成功", 'token': token.decode('ascii'), 'name': g.admin.name})
 
 

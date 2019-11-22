@@ -88,20 +88,40 @@ class Admin(db.Model):
     # 解析token，确认登录的用户身份
     @staticmethod
     def verify_auth_token(token):
+        # 测试读取mysql数据库
+        # datas = Admin.query.all()
+        admin = Admin.query.filter_by(name='admin').first()
+        print('tset mysql',admin)
+
         s = Serializer(app.config['SECRET_KEY'])
+        print('s',s)
         try:
+            print('看看进try没')
             data = s.loads(token)
+            print('token',token)
+            print('data',data)
         except SignatureExpired:
+            print('SignatureExpired')
             return None  # valid token, but expired
         except BadSignature:
+            print('BadSignature')
             return None  # invalid token
         admin = Admin.query.get(data['id'])
+        # admin = 8
         print('admin=',admin)
         return admin
+        # return 8
 
 # 将模型映射到数据库中
 db.drop_all()
 db.create_all()
+
+# 添加数据
+rdkx_user = Admin(id="8",name="rdkx",password="$5$rounds=535000$9WoOVzcj7Fvi3FsJ$EnhMCR6iPrgkp3G1iulbz5dAw9apErh2UrbyVD6JQP7")
+# rdkx_user = Admin(id="8",name="rdkx",password="123456789")
+db.session.add(rdkx_user)
+db.session.commit()
+print("我看看加数据了没")
 
 # 密码校验
 @auth.verify_password
@@ -111,14 +131,17 @@ def verify_password(name_or_token, password):
         print('not name_or_token')
         return False
     name_or_token = re.sub(r'^"|"$', '', name_or_token)
+    print('name_or_token',name_or_token)
     admin = Admin.verify_auth_token(name_or_token)
     print(admin)
     if not admin:
-        admin = Admin.query.filter_by(name=name_or_token).first()
+        admin = Admin.query.first()
+        # admin = Admin.query.filter_by(name=name_or_token).first()
         print('not admin',admin)
         if not admin or not admin.verify_password(password):
             return False
     g.admin = admin
+    # g.admin = 8
     return True
 
 
@@ -126,7 +149,7 @@ def verify_password(name_or_token, password):
 @auth.login_required
 def get_auth_token():
     token = g.admin.generate_auth_token()
-    # return jsonify({'code': 200, 'msg': "登录成功", 'token': token.decode('ascii'), 'name': g.admin.name})
+    print('token',token)
     return jsonify({'code': 200, 'msg': "登录成功", 'token': token.decode('ascii'), 'name': g.admin.name})
 
 

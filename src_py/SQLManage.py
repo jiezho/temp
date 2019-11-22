@@ -49,7 +49,13 @@ class Article(db.Model):
     uid = db.Column(db.Integer, db.ForeignKey("data.id"), nullable=False)
  
     author = db.relationship("Data", backref="articles")
- 
+
+class Admin(db.Model):
+    __tablename__ = 'admins'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32), index=True)
+    password = db.Column(db.String(128))
+
 # 将模型映射到数据库中
 db.drop_all()
 db.create_all()
@@ -60,11 +66,19 @@ article = Article(title="luluxiu")
 article.author = data
 db.session.add(article)
 db.session.commit()
- 
+
+rdkx_user = Admin(id="8",name="rdkx",password="$5$rounds=FsJ$EnhMCR6i")
+db.session.add(rdkx_user)
+db.session.commit()
+
+
 # 查找数据
 # User.query 和 db.session.query(User)效果一样
 datas = Data.query.all() # 返回list
 print(datas)
+
+admins = Admin.query.all()
+print('admin',admins)
 # 排序: users = User.query.order_by(User.id.desc()).all()
 # 其他                    .filter
                         # .filter_by
