@@ -49,7 +49,6 @@ class JoinInfos(db.Model):
     groupA = db.Column(db.Integer)
     groupB = db.Column(db.Integer)
     unit = db.Column(db.String(64))
-    # pub_date = db.Column(db.DateTime, default=datetime.now())
 
     def __repr__(self):
         return "<JoinInfos:%s>"%self.name
@@ -81,36 +80,23 @@ class Admin(db.Model):
         return custom_app_context.verify(password, self.password)
 
     # 获取token，有效时间100min
-    def generate_auth_token(self, expiration=600):
+    def generate_auth_token(self, expiration=6000):
         s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'id': self.id})
 
     # 解析token，确认登录的用户身份
     @staticmethod
     def verify_auth_token(token):
-        # 测试读取mysql数据库
-        # datas = Admin.query.all()
-        admin = Admin.query.filter_by(name='admin').first()
-        print('tset mysql',admin)
-
         s = Serializer(app.config['SECRET_KEY'])
-        print('s',s)
         try:
-            print('看看进try没')
             data = s.loads(token)
-            print('token',token)
-            print('data',data)
         except SignatureExpired:
-            print('SignatureExpired')
             return None  # valid token, but expired
         except BadSignature:
-            print('BadSignature')
             return None  # invalid token
         admin = Admin.query.get(data['id'])
-        # admin = 8
-        print('admin=',admin)
         return admin
-        # return 8
+ 
 
 # 将模型映射到数据库中
 db.drop_all()
@@ -118,30 +104,33 @@ db.create_all()
 
 # 添加数据
 rdkx_user = Admin(id="8",name="rdkx",password="$5$rounds=535000$9WoOVzcj7Fvi3FsJ$EnhMCR6iPrgkp3G1iulbz5dAw9apErh2UrbyVD6JQP7")
-# rdkx_user = Admin(id="8",name="rdkx",password="123456789")
 db.session.add(rdkx_user)
 db.session.commit()
-print("我看看加数据了没")
+
+infos1 = JoinInfos(id='1', name='机组负荷', groupA='22', groupB='15.6', unit='MW')
+infos2 = JoinInfos(id='2', name='烟气侧压差', groupA='233', groupB='15.6', unit='kPa')
+infos3 = JoinInfos(id='3', name='堵塞系数', groupA='22', groupB='15.6', unit='')
+infos4 = JoinInfos(id='4', name='堵塞速度', groupA='22', groupB='15.6', unit='%/天')
+infos5 = JoinInfos(id='5', name='脱硝实际喷氨量', groupA='-90', groupB='15.6', unit='t/h')
+infos6 = JoinInfos(id='6', name='脱氨喷氨需求量', groupA='22', groupB='0.06', unit='t/h')
+infos7 = JoinInfos(id='7', name='沉积系数', groupA='22', groupB='15.6', unit='MW')
+infos8 = JoinInfos(id='8', name='沉积系数周均值', groupA='22', groupB='15.6', unit='MW')
+db.session.add_all([infos1, infos2, infos3, infos4, infos5, infos6, infos7, infos8])
+db.session.commit()
 
 # 密码校验
 @auth.verify_password
 def verify_password(name_or_token, password):
-    print('进入verify_password')
     if not name_or_token:
-        print('not name_or_token')
         return False
     name_or_token = re.sub(r'^"|"$', '', name_or_token)
-    print('name_or_token',name_or_token)
     admin = Admin.verify_auth_token(name_or_token)
-    print(admin)
     if not admin:
         admin = Admin.query.first()
         # admin = Admin.query.filter_by(name=name_or_token).first()
-        print('not admin',admin)
         if not admin or not admin.verify_password(password):
             return False
     g.admin = admin
-    # g.admin = 8
     return True
 
 
@@ -149,7 +138,6 @@ def verify_password(name_or_token, password):
 @auth.login_required
 def get_auth_token():
     token = g.admin.generate_auth_token()
-    print('token',token)
     return jsonify({'code': 200, 'msg': "登录成功", 'token': token.decode('ascii'), 'name': g.admin.name})
 
 
@@ -173,11 +161,13 @@ def get_user_list():
     name = request.args.get('name', '')
     query = db.session.query
     if name:
-        Infos = query(JoinInfos).filter(
-            JoinInfos.name.like('%{}%'.format(name)))
+        Infos = query(JoinInfos).filter(JoinInfos.name.like('%{}%'.format(name)))
+        print('name Infos',Infos)
     else:
         Infos = query(JoinInfos)
+        print('Infos',Infos)
     total = Infos.count()
+    print('total',total)
     if not page:
         Infos = Infos.all()
     else:

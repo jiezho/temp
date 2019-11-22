@@ -1,10 +1,10 @@
 import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
-import Table from './views/nav1/Table.vue'
-// import Table from './views/runtimeAlarm/RuntimeDataTable.vue'
-import echarts from './views/charts/echarts.vue'
-// import echarts from './views/history/historyEcharts.vue'
+// import Table from './views/nav1/Table.vue'
+import Table from './views/runtimeAlarm/RuntimeDataTable.vue'
+// import echarts from './views/charts/echarts.vue'
+import echarts from './views/history/historyEcharts.vue'
 
 let routes = [
     {
