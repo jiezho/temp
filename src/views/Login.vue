@@ -89,30 +89,6 @@
 
 </script>
 
-// <style lang="scss" scoped>
-//   .login-holder {
-//     /*box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);*/
-//     -webkit-border-radius: 5px;
-//     border-radius: 5px;
-//     // -moz-border-radius: 5px;
-//     // background-clip: padding-box;
-//     margin: 180px auto;
-//     width: 350px;
-//     top :500px;
-//     padding: 35px 35px 15px 35px;
-//     background: rgba(255,255,255,0.5); // 最后一个参数设置透明度
-//     border: 1px solid #eaeaea;
-//     box-shadow: 0 0 25px #cac6c6;
-//     .title {
-//       margin: 0px auto 40px auto;
-//       text-align: center;
-//       color: #505458;
-//     }
-//     .remember {
-//       margin: 0px 0px 35px 0px;
-//     }
-//   }
-// </style>
 
 <style lang="scss" scoped>
 $bg:#2d3a4b;
@@ -120,6 +96,9 @@ $dark_gray:#889aa4;
 $light_gray:#eee;
 
 .login-background {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 585px;
   // height: 100%;
@@ -128,7 +107,6 @@ $light_gray:#eee;
 
 }
 .login-holder {
-    // box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
     -webkit-border-radius: 5px;
     border-radius: 5px;
     -moz-border-radius: 5px;
@@ -137,7 +115,7 @@ $light_gray:#eee;
     width: 350px;
     top :500px;
     padding: 35px 35px 15px 35px;
-    background: rgba(255,255,255,0.5); // 最后一个参数设置透明度
+    background: rgba(255,255,255,0.6); // 最后一个参数设置透明度
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
     .title {
@@ -155,7 +133,7 @@ $light_gray:#eee;
     color: #fff;
     position: relative;
     left: 430px;
-    // top: 80px;
+    top: 10px;
     margin-bottom: 10px;
     span {
       &:first-of-type {
@@ -169,45 +147,5 @@ $light_gray:#eee;
   background-color: $bg;
   overflow: hidden;
   top: 0px;
-
-  // .login-form {
-  //   position: relative;
-  //   width: 500px;
-  //   max-width: 100%;
-  //   padding: 160px 35px 0;
-  //   margin: 0 auto;
-  //   overflow: hidden;
-  // }
-
-  // .svg-container {
-  //   padding: 6px 5px 6px 15px;
-  //   color: $dark_gray;
-  //   vertical-align: middle;
-  //   width: 30px;
-  //   display: inline-block;
-  // }
-
-  // .title-container {
-  //   position: relative;
-  //   top: 35px;
-  //   right: 135px;
-  //   .title {
-  //     font-size: 26px;
-  //     color: $light_gray;
-  //     margin: 0px auto 40px auto;
-  //     text-align: center;
-  //     font-weight: bold;
-  //   }
-  // }
-
-  // .show-pwd {
-  //   position: absolute;
-  //   right: 10px;
-  //   top: 7px;
-  //   font-size: 16px;
-  //   color: $dark_gray;
-  //   cursor: pointer;
-  //   user-select: none;
-  // }
 }
 </style>
