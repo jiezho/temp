@@ -3,7 +3,7 @@
     <div class="login-background">
       <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-holder">
         <!-- <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left"> -->
-        <h3 class="title">系统登录</h3>
+        <h3 class="title">系  统  登  录</h3>
         <el-form-item prop="account">
           <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
         </el-form-item>

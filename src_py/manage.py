@@ -46,8 +46,8 @@ class JoinInfos(db.Model):
     __tablename__ = 'joininfos'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(200), index=True)
-    groupA = db.Column(db.Integer)
-    groupB = db.Column(db.Integer)
+    groupA = db.Column(db.Float)
+    groupB = db.Column(db.Float)
     unit = db.Column(db.String(64))
 
     def __repr__(self):
@@ -107,14 +107,14 @@ rdkx_user = Admin(id="8",name="rdkx",password="$5$rounds=535000$9WoOVzcj7Fvi3FsJ
 db.session.add(rdkx_user)
 db.session.commit()
 
-infos1 = JoinInfos(id='1', name='机组负荷', groupA='22', groupB='15.6', unit='MW')
-infos2 = JoinInfos(id='2', name='烟气侧压差', groupA='233', groupB='15.6', unit='kPa')
-infos3 = JoinInfos(id='3', name='堵塞系数', groupA='22', groupB='15.6', unit='')
-infos4 = JoinInfos(id='4', name='堵塞速度', groupA='22', groupB='15.6', unit='%/天')
-infos5 = JoinInfos(id='5', name='脱硝实际喷氨量', groupA='-90', groupB='15.6', unit='t/h')
-infos6 = JoinInfos(id='6', name='脱氨喷氨需求量', groupA='22', groupB='0.06', unit='t/h')
-infos7 = JoinInfos(id='7', name='沉积系数', groupA='22', groupB='15.6', unit='MW')
-infos8 = JoinInfos(id='8', name='沉积系数周均值', groupA='22', groupB='15.6', unit='MW')
+infos1 = JoinInfos(id='1', name='机组负荷', groupA='421.88', groupB='421.88', unit='MW')
+infos2 = JoinInfos(id='2', name='烟气侧压差', groupA='1100', groupB='930', unit='Pa')
+infos3 = JoinInfos(id='3', name='堵塞系数', groupA='1.248', groupB='1.055', unit='')
+infos4 = JoinInfos(id='4', name='堵塞速度', groupA='-11.04', groupB='-4.12', unit='%/天')
+infos5 = JoinInfos(id='5', name='脱硝实际喷氨量', groupA='103.26', groupB='105.37', unit='t/h')
+infos6 = JoinInfos(id='6', name='脱氨喷氨需求量', groupA='84.35', groupB='84.35', unit='t/h')
+infos7 = JoinInfos(id='7', name='沉积系数', groupA='62334', groupB='60891', unit='')
+infos8 = JoinInfos(id='8', name='沉积系数12天均值', groupA='73776', groupB='70818', unit='')
 db.session.add_all([infos1, infos2, infos3, infos4, infos5, infos6, infos7, infos8])
 db.session.commit()
 
