@@ -239,6 +239,7 @@ def getdrawLineChart():
                     grade_data[grade][profess_local_num] += 1
                 else:
                     pass
+    print(profess_value, grade_value, grade_data)
     return jsonify({'code': 200, 'profess_value': profess_value, 'grade_value': grade_value, 'grade_data': grade_data})
 
 # @app.route('/api/getdrawLineChartBlock', methods=['GET'])

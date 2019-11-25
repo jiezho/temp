@@ -35,10 +35,10 @@ export const getdrawLineChart = () => {
     return axios.get(`${base}/getdrawLineChart`);
 };
 
-// export const getdrawLineChartBlock = () => {
-//     return axios.get(`${base}/getdrawLineChartBlock`);
-//     //todo
-// };
+export const getdrawStackedAreaChart = () => {
+    return axios.get(`${base}/getdrawStackedAreaChart`);
+    //todo
+};
 
 // export const getdrawLineChartBlock = () => {
 //     return axios.get(`${base}/getdrawLineChartSpurtNH3`);

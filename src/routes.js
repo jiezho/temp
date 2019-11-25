@@ -5,7 +5,8 @@ import Home from './views/Home.vue'
 // import Table from './views/runtimeAlarm/RuntimeDataTable.vue'
 import Table from './views/runtimeAlarm/RuntimeDataPage.vue'
 // import echarts from './views/charts/echarts.vue'
-import echarts from './views/history/historyEcharts.vue'
+// import echarts from './views/history/historyEcharts.vue'
+import echarts from './views/history/historyPage.vue'
 
 let routes = [
     {

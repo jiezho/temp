@@ -3,8 +3,7 @@
         <el-row :gutter="10" type="flex" class="row-bg" justify="center">
             <el-col :span="12">
                 <!-- <div id="chartTable" style="width:50%; height:250px;"></div> -->
-                <!-- <el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 93%;"> -->
-                <el-table :data="users" style="width: 93%; hight= 50%">
+                <el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 93%;">
                     <el-table-column prop="name" label=" 数据项" hight="20" width="150" >
                     </el-table-column>
                     <el-table-column prop="groupA" label="A侧" hight="20" width="100">
@@ -17,25 +16,24 @@
             </el-col>
             <el-col :span="12">
                 <div id="chartStackedArea" style="width:100%; height:100%; background-color:#F0F2EE"> </div>
+                <!-- <div id="chartTxt" style="width:85%; height:250px; outline-style:ridge; background-color:#F0F2EE">
+                    <h1 style="font-family:verdana; color:#3399FF"> 专家建议：</h1>
+                    <div class = "expertAdvice"> </div>
+                    <p border-style:inset; "expertAdvice"</p>
+                </div> -->
             </el-col>
         </el-row>
         <br>
         <el-row :gutter="10" type="flex" class="row-bg" justify="center">
             <el-col :span="12">
-                <div id="chartTxt" style="width:85%; height:150px; outline-style:ridge; background-color:#F0F2EE">
+                <div id="chartTxt" style="width:85%; height:250px; outline-style:ridge; background-color:#F0F2EE">
                     <h1 style="font-family:verdana; color:#3399FF"> 专家建议：</h1>
                     <div class = "expertAdvice"> </div>
-                    <body>
-                    <p1> 1,提高吹灰频次<br></p1>
-                    <p2> 2,调整燃煤硫分<br></p2>
-                    <p3> 3,提高空预器入口风温<br></p3>
-                    <p4> 4,提高排烟温度<br></p4>
-                    </body>
+                    <p border-style:inset; "expertAdvice"</p>
                 </div>
             </el-col>
             <el-col :span="12">
-                <!-- <h2>vue中插入Echarts示例</h2> -->
-                <div id="chartAlarm" style="width:100%; height:150px;"></div>
+                <div id="chartAlarm" style="width:50%; height:250px;"></div>
             </el-col>
         </el-row>
     </section>
@@ -198,53 +196,9 @@ export default {
     }
   },
   mounted() {
-    // Console.log("runtimedata mounted"); // 打印不出来啊
     this.getUsers();
     this.drawStackedAreaChart();
-    this.drawLineTest();
-    
-    let this_ = this;
-      let myChart = echarts.init(document.getElementById('chartAlarm'));
-      let options = {
-        color: ['#f44'],
-        tooltip : {
-          trigger: 'axis',
-          axisPointer : {
-            type : 'shadow'
-          }
-        },
-        xAxis : [
-          {
-            type : 'category',
-            data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月',],
-            axisTick: {
-              alignWithLabel: true
-            }
-          }
-        ],
-        yAxis : [
-          {
-            type : 'value'
-          }
-        ],
-        series : [
-          {
-            name:'每月花费',
-            type:'bar',
-            barWidth: '60%',
-            data:[995,666,444,858,654,236,645,546,846,225,547,356]
-          }
-        ]
-      };
-      myChart.setOption(options);
- 
-      //建议加上以下这一行代码，不加的效果图如下（当浏览器窗口缩小的时候）。超过了div的界限（红色边框）
-      window.addEventListener('resize',function() {myChart.resize()});
-    },
-    // methods: {},
-    // watch: {},
-    // created() {
-    // }
+  },
 //   updated: function() {
 //     this.getUsers();
 //     this.drawStackedAreaChart();
@@ -257,22 +211,11 @@ export default {
   width: 100%;
   float: left;
 }
-#chartStackedArea{
+.chartStackedArea{
     width: 50%;
     height: 500px;
-    /* border: 1px solid red; */
+    border: 1px solid red;
     margin: 0 auto;
-}
-h2{
-text-align: center;
-padding: 30px;
-font-size: 18px;
-}
-#chartAlarm{
-width: 50%;
-height: 500px;
-border: 1px solid red;
-margin: 0 auto;
 }
 </style>
 

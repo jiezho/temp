@@ -111,8 +111,8 @@ infos1 = JoinInfos(id='1', name='机组负荷', groupA='421.88', groupB='421.88'
 infos2 = JoinInfos(id='2', name='烟气侧压差', groupA='1100', groupB='930', unit='Pa')
 infos3 = JoinInfos(id='3', name='堵塞系数', groupA='1.248', groupB='1.055', unit='')
 infos4 = JoinInfos(id='4', name='堵塞速度', groupA='-11.04', groupB='-4.12', unit='%/天')
-infos5 = JoinInfos(id='5', name='脱硝实际喷氨量', groupA='103.26', groupB='105.37', unit='t/h')
-infos6 = JoinInfos(id='6', name='脱氨喷氨需求量', groupA='84.35', groupB='84.35', unit='t/h')
+infos5 = JoinInfos(id='5', name='脱硝实际喷氨量', groupA='103.26', groupB='105.37', unit='kg/h')
+infos6 = JoinInfos(id='6', name='脱氨喷氨需求量', groupA='84.35', groupB='84.35', unit='kg/h')
 infos7 = JoinInfos(id='7', name='沉积系数', groupA='62334', groupB='60891', unit='')
 infos8 = JoinInfos(id='8', name='沉积系数12天均值', groupA='73776', groupB='70818', unit='')
 db.session.add_all([infos1, infos2, infos3, infos4, infos5, infos6, infos7, infos8])
@@ -234,31 +234,34 @@ def getdrawPieChart():
 @app.route('/api/getdrawLineChart', methods=['GET'])
 @auth.login_required
 def getdrawLineChart():
-    grade_value = []  # 年级汇总
-    profess_value = []  # 学院汇总
-    grade_data = {}  # 年级各学院字典
-    Infos = JoinInfos.query.all()
-    for info in Infos:
-        if info.grade not in grade_value:
-            grade_value.append(info.grade)
-            grade_data[info.grade] = []
-        if info.profess not in profess_value:
-            profess_value.append(info.profess)
-    for grade in grade_value:
-        for profess in profess_value:
-            grade_data[grade].append(0)
-    for info in Infos:
-        for grade in grade_value:
-            for profess_local_num in range(0, len(profess_value)):
-                if info.profess == profess_value[profess_local_num] and info.grade == grade:
-                    grade_data[grade][profess_local_num] += 1
-                else:
-                    pass
+    grade_value = ['计算机学院', '管理学院', '艺术学院', '数学学院']  # 年级汇总
+    profess_value = ['大一', '大二']  # 学院汇总
+    grade_data = {'大一': [1, 0, 1, 1], '大二': [1, 1, 0, 0]}  # 年级各学院字典
+    # Infos = JoinInfos.query.all()
+    # for info in Infos:
+    #     if info.grade not in grade_value:
+    #         grade_value.append(info.grade)
+    #         grade_data[info.grade] = []
+    #     if info.profess not in profess_value:
+    #         profess_value.append(info.profess)
+    # for grade in grade_value:
+    #     for profess in profess_value:
+    #         grade_data[grade].append(0)
+    # for info in Infos:
+    #     for grade in grade_value:
+    #         for profess_local_num in range(0, len(profess_value)):
+    #             if info.profess == profess_value[profess_local_num] and info.grade == grade:
+    #                 grade_data[grade][profess_local_num] += 1
+    #             else:
+    #                 pass
+    print(grade_value, profess_value, grade_data)
     return jsonify({'code': 200, 'profess_value': profess_value, 'grade_value': grade_value, 'grade_data': grade_data})
+    # return jsonify({'code': 200, 'profess_value': [1,2,3], 'grade_value': [5,6,7], 'grade_data': {8,8,8})
 
-# @app.route('/api/getdrawLineChartBlock', methods=['GET'])
-# @auth.login_required
-# def getdrawLineChartBlock():
+@app.route('/api/getdrawStackedAreaChart', methods=['GET'])
+@auth.login_required
+def getdrawStackedAreaChart():
+    return jsonify({'code':200, 'x':20, 'y':50})
 
 @auth.error_handler
 def unauthorized():
