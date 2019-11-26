@@ -4,7 +4,7 @@
             <el-col :span="12">
                 <!-- <div id="chartTable" style="width:50%; height:250px;"></div> -->
                 <!-- <el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 93%;"> -->
-                <el-table :data="users" style="width: 93%; hight= 50%">
+                <el-table :data="users" style="width: 93%; hight= 40%">
                     <el-table-column prop="name" label=" 数据项" hight="20" width="150" >
                     </el-table-column>
                     <el-table-column prop="groupA" label="A侧" hight="20" width="100">
@@ -16,7 +16,7 @@
                 </el-table>
             </el-col>
             <el-col :span="12">
-                <div id="chartStackedArea" style="width:100%; height:100%; background-color:#F0F2EE"> </div>
+                <div id="chartStackedArea" style="width:100%; height:360px; background-color:#F0F2EE"> </div>
             </el-col>
         </el-row>
         <br>
@@ -35,7 +35,7 @@
             </el-col>
             <el-col :span="12">
                 <!-- <h2>vue中插入Echarts示例</h2> -->
-                <div id="chartAlarm" style="width:100%; height:150px;"></div>
+                <div id="chartAlarm" style="width:100%; height:100px;"></div>
             </el-col>
         </el-row>
     </section>
@@ -84,10 +84,10 @@ export default {
          this.chartStackedArea = echarts.init(document.getElementById("chartStackedArea"));
          getdrawStackedAreaChart().then(res => {
             let { x, y, code } = res.data;
-            option = {
-                title: {
-                    text: '空预器实时预警'
-                },
+            this.chartStackedArea.setOption ({
+                // title: {
+                //     text: '空预器实时预警'
+                // },
                 tooltip : {
                     trigger: 'axis',
                     axisPointer: {
@@ -111,7 +111,7 @@ export default {
                 grid: {
                     left: '3%',
                     right: '4%',
-                    bottom: '3%',
+                    bottom: '13%',
                     top: '8%',
                     containLabel: true
                 },
@@ -184,13 +184,13 @@ export default {
                         data:[1300,400]
                     }
                 ]
-            };
-            this.chartLine.setOption({
-            title: {
-              text: "空预器堵塞系数"
-            },
             });
-            this.chartStackedArea.setOption(option);
+            // this.chartLine.setOption({
+            // title: {
+            //   text: "空预器堵塞系数"
+            // },
+            // });
+            // this.chartStackedArea.setOption(option);
             // if (option && typeof option === "object") {
             //     this.chartStackedArea.setOption(option, true);
             // }
@@ -263,6 +263,7 @@ export default {
     /* border: 1px solid red; */
     margin: 0 auto;
 }
+
 h2{
 text-align: center;
 padding: 30px;
@@ -276,3 +277,11 @@ margin: 0 auto;
 }
 </style>
 
+<style>
+.el-table td, .el-table th {
+    height:35px ;
+    min-width: 0;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+</style>

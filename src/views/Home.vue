@@ -4,11 +4,16 @@
 			<el-col :span="10" class="logo" :class="collapsed?'logo-collapse-width':'logo-width'">
 				{{collapsed?'':sysName}}
 			</el-col>
-			<el-col :span="10">
+			<el-col :span="2">
 				<div class="tools" @click.prevent="collapse">
 					<i class="fa fa-align-justify"></i>
+          <!-- <p 离线数据上传></p> -->
 				</div>
 			</el-col>
+      <el-col :span="8">
+          <el-button @click="handleDowload" type="primary" size="small" style="width:65px;">导出</el-button>
+          <el-button @click="dialogVisible = true" type="primary" size="small" style="width:65px;">上传</el-button>
+      </el-col>
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link userinfo-inner"><img src="https://s1.ax1x.com/2018/02/08/93yKtU.jpg" /> {{sysUserName}}</span>
@@ -38,7 +43,7 @@
 						<template v-if="!item.leaf">
 							<div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"><i :class="item.iconCls"></i></div>
 							<ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)"> 
-								<li v-for="child in item.children" v-if="!child.hidden" :key="child.path" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
+								<li v-for="child in item.children" v-if="!child.hidden" :key="child.path" class="el-" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
 							</ul>
 						</template>
 						<template v-else>
@@ -86,13 +91,38 @@
         <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
 			</div>
 		</el-dialog>
+  <!-- action="https://jsonplaceholder.typicode.com/posts/" -->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="500px">
+      <el-upload
+        style="display:inline-block;"
+        class="upload-demo"
+        action="http://127.0.0.1:5000/data/"
+        :limit="1"
+        :on-exceed="handleExceed">
+        <el-button size="small" type="primary">点击上传</el-button>
+      </el-upload>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
 		</el-col>
 	</el-row>
+
 </template>
 
 <script>
 import { setpwd } from "../api/api";
+// import { exportExcel } from './excel/export-excel';
+// import { uploadExcel } from './excel/upload-excel'
 export default {
+  // components: {
+  //   exportExcel,
+  //   uploadExcel
+  // },
   data() {
     var validatePass = (rule, value, callback) => {
       if (value === "") {
@@ -117,6 +147,7 @@ export default {
     };
     return {
       sysName: "空预器堵塞监测",
+      dialogVisible: false,
       collapsed: false,
       sysUserName: "",
       form: {
@@ -206,6 +237,10 @@ export default {
       this.$refs.menuCollapsed.getElementsByClassName(
         "submenu-hook-" + i
       )[0].style.display = status ? "block" : "none";
+    },
+    handleDowload() {
+      const url = 'https://download.teamviewer.com/download/TeamViewer_Setup.exe';
+      window.open(url,'_blank');
     }
   },
   mounted() {

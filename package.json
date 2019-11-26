@@ -13,11 +13,14 @@
     "axios": "^0.19.0",
     "echarts": "^3.3.2",
     "element-ui": "^1.2.8",
+    "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
+    "js-cookie": "^2.2.1",
     "nprogress": "^0.2.0",
     "vue": "^2.2.2",
     "vue-router": "^2.3.0",
-    "vuex": "^2.0.0-rc.6"
+    "vuex": "^2.0.0-rc.6",
+    "xlsx": "^0.15.2"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
@@ -50,6 +53,7 @@
     "ora": "^1.0.0",
     "rimraf": "^2.6.0",
     "sass-loader": "^6.0.0",
+    "script-loader": "^0.7.2",
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",
     "url-loader": "^2.2.0",

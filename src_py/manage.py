@@ -217,17 +217,18 @@ def bathremove_user():
 @app.route('/api/getdrawPieChart', methods=['GET'])
 @auth.login_required
 def getdrawPieChart():
-    query = db.session.query
-    Infos = query(JoinInfos)
-    total = Infos.count()
-    data_value = [0, 0, 0, 0, 0, 0, 0]  # 和下面组别一一对应
+    # query = db.session.query
+    # Infos = query(JoinInfos)
+    # total = Infos.count()
+    total = 21
+    data_value = [1, 3, 2, 5, 2, 4, 4]  # 和下面组别一一对应
     group_value = ['视觉', '视频', '前端', '办公', '后端', '运营', '移动']
-    for info in Infos:
-        for num in range(0, 7):
-            if group_value[num] in info.group:
-                data_value[num] += 1
-            else:
-                pass
+    # for info in Infos:
+    #     for num in range(0, 7):
+    #         if group_value[num] in info.group:
+    #             data_value[num] += 1
+    #         else:
+    #             pass
     return jsonify({'code': 200, 'value': data_value, 'total': total})
 
 
