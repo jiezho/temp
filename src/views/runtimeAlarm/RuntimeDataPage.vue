@@ -149,7 +149,7 @@ export default {
                         stack: '总量',
                         symbol:'none',  
                         smooth:true,    
-                        areaStyle: {},
+                        areaStyle: {normal: {}},
                         data:[0.4671, 1.5873]
                     },
 
@@ -159,7 +159,7 @@ export default {
                         stack: '总量',
                         symbol:'none',  //去掉点
                         smooth:true,    //让曲线变平滑的 
-                        areaStyle: {},
+                        areaStyle: {normal: {}},
                         data:[0.0929, 0.3177]
                     },
 
@@ -169,7 +169,7 @@ export default {
                         stack: '总量',
                         symbol:'none',  
                         smooth:true,    
-                        areaStyle: {},
+                        areaStyle: {normal: {}},
                         data:[0.1407,0.476]
                     },
                     {
@@ -195,7 +195,7 @@ export default {
                             }
                         },
                         areaStyle: {normal: {}},
-                        // data:[1300,400]
+                        data:[2.5658, 0.325]
                     }
                 ]
             });

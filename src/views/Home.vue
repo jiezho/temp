@@ -11,8 +11,8 @@
 				</div>
 			</el-col>
       <el-col :span="8">
-          <el-button @click="handleDowload" type="primary" size="small" style="width:65px;">导出</el-button>
-          <el-button @click="dialogVisible = true" type="primary" size="small" style="width:65px;">上传</el-button>
+          <el-button @click="handleDowload" type="primary" size="small" style="width:65px; background-color:#1874CD">数据导出</el-button>
+          <el-button @click="dialogVisible = true" type="primary" size="small" style="width:65px; background-color:#1874CD">数据上传</el-button>
       </el-col>
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
@@ -92,6 +92,7 @@
 			</div>
 		</el-dialog>
   <!-- action="https://jsonplaceholder.typicode.com/posts/" -->
+  <!-- action="${base}/exp_excel" -->
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
@@ -99,10 +100,10 @@
       <el-upload
         style="display:inline-block;"
         class="upload-demo"
-        action="${base}/exp_excel"
+        action="https://jsonplaceholder.typicode.com/posts/"
         :limit="1"
         :on-exceed="handleExceed">
-        <el-button size="small" type="primary">点击上传</el-button>
+        <el-button size="small" type="primary">请选择要上传的文件</el-button>
       </el-upload>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -241,7 +242,7 @@ export default {
     },
     handleDowload() {
       // const url = 'https://download.teamviewer.com/download/TeamViewer_Setup.exe';
-      const url = '${base}/exp_excel'
+      const url = 'https://github.com/jiezho/rdkx/blob/rdkx_v0r20/src/data/excel/%E7%84%A6%E4%BD%9C%E6%95%B0%E6%8D%AE.xlsx?raw=true'
       window.open(url,'_blank');
     }
   },

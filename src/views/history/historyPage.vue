@@ -1,10 +1,10 @@
 <template>
-    <section class="chart-container">
+    <section class="chart-container" style="height:100%;width:100%; background-color:#DAEAF2">
         <el-row>
             <el-col :span="12">
                 <div id="airClogChart" style="width:100%; height:200px;"></div>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="12"> 
                 <div id="sizeNH3Chart" style="width:100%; height:200px;"></div>
             </el-col>
         </el-row>
