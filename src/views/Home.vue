@@ -99,7 +99,7 @@
       <el-upload
         style="display:inline-block;"
         class="upload-demo"
-        action="http://127.0.0.1:5000/data/"
+        action="${base}/exp_excel"
         :limit="1"
         :on-exceed="handleExceed">
         <el-button size="small" type="primary">点击上传</el-button>
@@ -115,7 +115,8 @@
 </template>
 
 <script>
-import { setpwd } from "../api/api";
+import { setpwd, exp_excel } from "../api/api";
+let base = 'http://127.0.0.1:5000/api';
 // import { exportExcel } from './excel/export-excel';
 // import { uploadExcel } from './excel/upload-excel'
 export default {
@@ -239,7 +240,8 @@ export default {
       )[0].style.display = status ? "block" : "none";
     },
     handleDowload() {
-      const url = 'https://download.teamviewer.com/download/TeamViewer_Setup.exe';
+      // const url = 'https://download.teamviewer.com/download/TeamViewer_Setup.exe';
+      const url = '${base}/exp_excel'
       window.open(url,'_blank');
     }
   },

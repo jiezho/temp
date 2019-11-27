@@ -35,18 +35,23 @@ export const getdrawLineChart = () => {
     return axios.get(`${base}/getdrawLineChart`);
 };
 
+export const exp_excel = () => {
+    return axios.get(`${base}/exp_excel`);
+};
+
 export const getdrawStackedAreaChart = () => {
     return axios.get(`${base}/getdrawStackedAreaChart`);
     //todo
 };
 
+export const getdrawAirClogChart = () => {
+    return axios.get(`${base}/getdrawAirClogChart`);
+};
 
-// export const getdrawLineChartBlock = () => {
-//     return axios.get(`${base}/getdrawLineChartSpurtNH3`);
-//     //todo
-// };
+export const getdrawSizeNH3Chart = () => {
+    return axios.get(`${base}/getdrawSizeNH3Chart`);
+};
 
-// export const getdrawLineChartBlock = () => {
-//     return axios.get(`${base}/getdrawLineChartDeposition`);
-//     //todo
-// };
+export const getdrawAirDeposiChart = () => {
+    return axios.get(`${base}/getdrawAirDeposiChart`);
+};

@@ -20,7 +20,7 @@
             </el-col>
         </el-row>
         <br>
-        <el-row :gutter="10" type="flex" class="row-bg" justify="center">
+        <el-row :gutter="10" type="flex" class="row-bg" justify="center" style="transform: translateY(-20px);"> 
             <el-col :span="12">
                 <div id="chartTxt" style="width:85%; height:150px; outline-style:ridge; background-color:#F0F2EE">
                     <h1 style="font-family:verdana; color:#3399FF"> 专家建议：</h1>
@@ -34,8 +34,20 @@
                 </div>
             </el-col>
             <el-col :span="12">
-                <!-- <h2>vue中插入Echarts示例</h2> -->
-                <div id="chartAlarm" style="width:100%; height:100px;"></div>
+                <div id="chartAlarm" style="width:100%; height:100px;text-align: center;
+                         padding-top: 30px;box-sizing: border-box;">
+                    <el-popover
+                        placement="top"
+                        width="160"
+                        v-model="visible">
+                        <p>你是否确认已注意到预警，并关闭提示吗？</p>
+                        <div style="text-align: right; margin: 0">
+                            <el-button size="mini" type="text" @click="visible = false">否</el-button>
+                            <el-button type="primary" size="mini" @click="visible = false">是</el-button>
+                        </div>
+                        <el-button slot="reference">空预器堵塞预警</el-button>
+                    </el-popover>
+                </div>
             </el-col>
         </el-row>
     </section>
@@ -57,6 +69,7 @@ export default {
         total: 0,
         page: 1,
         chartStackedArea: null,
+        visible: false,
         };
     },
     methods: {
@@ -125,6 +138,7 @@ export default {
                 ],
                 yAxis : [
                     {
+                        data : ['0','3.175'],
                         type : 'value'
                     }
                 ],
@@ -136,7 +150,7 @@ export default {
                         symbol:'none',  
                         smooth:true,    
                         areaStyle: {},
-                        data:[50,200]
+                        data:[0.4671, 1.5873]
                     },
 
                     {
@@ -146,7 +160,7 @@ export default {
                         symbol:'none',  //去掉点
                         smooth:true,    //让曲线变平滑的 
                         areaStyle: {},
-                        data:[50,200]
+                        data:[0.0929, 0.3177]
                     },
 
                     {
@@ -156,7 +170,7 @@ export default {
                         symbol:'none',  
                         smooth:true,    
                         areaStyle: {},
-                        data:[50,300]
+                        data:[0.1407,0.476]
                     },
                     {
                         name:'二级告警区域',
@@ -165,7 +179,7 @@ export default {
                         symbol:'none',  
                         smooth:true,   
                         areaStyle: {normal: {}},
-                        data:[50,400]
+                        data:[0.2335, 0.794]
                     },
                     
                     {
@@ -181,74 +195,19 @@ export default {
                             }
                         },
                         areaStyle: {normal: {}},
-                        data:[1300,400]
+                        // data:[1300,400]
                     }
                 ]
             });
-            // this.chartLine.setOption({
-            // title: {
-            //   text: "空预器堵塞系数"
-            // },
-            // });
-            // this.chartStackedArea.setOption(option);
-            // if (option && typeof option === "object") {
-            //     this.chartStackedArea.setOption(option, true);
-            // }
+
          })
     }
   },
   mounted() {
-    // Console.log("runtimedata mounted"); // 打印不出来啊
     this.getUsers();
     this.drawStackedAreaChart();
-    this.drawLineTest();
-    
-    let this_ = this;
-      let myChart = echarts.init(document.getElementById('chartAlarm'));
-      let options = {
-        color: ['#f44'],
-        tooltip : {
-          trigger: 'axis',
-          axisPointer : {
-            type : 'shadow'
-          }
-        },
-        xAxis : [
-          {
-            type : 'category',
-            data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月',],
-            axisTick: {
-              alignWithLabel: true
-            }
-          }
-        ],
-        yAxis : [
-          {
-            type : 'value'
-          }
-        ],
-        series : [
-          {
-            name:'每月花费',
-            type:'bar',
-            barWidth: '60%',
-            data:[995,666,444,858,654,236,645,546,846,225,547,356]
-          }
-        ]
-      };
-      myChart.setOption(options);
- 
-      //建议加上以下这一行代码，不加的效果图如下（当浏览器窗口缩小的时候）。超过了div的界限（红色边框）
-      window.addEventListener('resize',function() {myChart.resize()});
+    // this.drawLineTest();
     },
-    // methods: {},
-    // watch: {},
-    // created() {
-    // }
-//   updated: function() {
-//     this.getUsers();
-//     this.drawStackedAreaChart();
-//   }
 };
 </script>
 
@@ -284,4 +243,5 @@ margin: 0 auto;
     text-overflow: ellipsis;
     vertical-align: middle;
 }
+
 </style>

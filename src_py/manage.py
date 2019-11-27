@@ -6,8 +6,10 @@
 import os
 import re
 import json
-from datetime import datetime
+import xlrd
 
+from datetime import datetime
+from xlrd import xldate_as_tuple
 from flask import Flask, g, jsonify, make_response, request
 from flask_cors import CORS
 from flask_httpauth import HTTPBasicAuth
@@ -15,6 +17,7 @@ from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 from passlib.apps import custom_app_context
+import flask_excel as excel
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -97,8 +100,29 @@ class Admin(db.Model):
         admin = Admin.query.get(data['id'])
         return admin
  
+# 创建excel导入的runtime数据数据库模型
+class HistoryData(db.Model):
+    __tablename__ = 'historyDatas'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    time = db.Column(db.DateTime, default=datetime.now())
+    airClogA = db.Column(db.Float)
+    airClogB = db.Column(db.Float)
+    sizeNH3Actual = db.Column(db.Float)
+    sizeNH3Demand = db.Column(db.Float)
+    airDeposiA = db.Column(db.Float)
+    airDeposiB = db.Column(db.Float)
 
-# 将模型映射到数据库中
+    def to_dict(self):
+        columns = self.__table__.columns.keys()
+        result = {}
+        for key in columns:
+            if key == 'time':
+                value = getattr(self, key).strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                value = getattr(self, key)
+            result[key] = value
+        return result
+    
 db.drop_all()
 db.create_all()
 
@@ -117,6 +141,94 @@ infos7 = JoinInfos(id='7', name='沉积系数', groupA='62334', groupB='60891', 
 infos8 = JoinInfos(id='8', name='沉积系数12天均值', groupA='73776', groupB='70818', unit='')
 db.session.add_all([infos1, infos2, infos3, infos4, infos5, infos6, infos7, infos8])
 db.session.commit()
+
+# excel数据导入到数据库
+dataPath = '../src/data/excel'
+runtimeData = xlrd.open_workbook(dataPath+'/焦作数据.xlsx')
+sheet = runtimeData.sheet_by_name('historyData')
+table = runtimeData.sheet_by_name(u'historyData')
+list = []
+for row in range(sheet.nrows):
+    rowlist = []
+    for col in range(sheet.ncols):
+        value = sheet.cell(row,col).value        
+        if sheet.cell(row,col).ctype == 3:            
+            date = xldate_as_tuple(sheet.cell(row,col).value,0)            
+            value = datetime(*date)  # excel中读取时间格式数据要注意      
+            # print('value',value)
+        rowlist.append(value)
+    list.append(rowlist)
+
+del list[0] #删掉第一行，第一行获取的是文件的头，一般不用插到数据库里面
+# print('list', list)
+    # 将数据存入数据库
+for a in list:
+    historydatas = HistoryData()
+    historydatas.id = a[0]
+    # historydatas.time = a[1].to_dict()
+    historydatas.time = a[1]
+    # print('historydatas.time',historydatas.time)
+    historydatas.airClogA = a[2]
+    historydatas.airClogB = a[3]
+    historydatas.sizeNH3Actual = a[4]
+    historydatas.sizeNH3Demand = a[5]
+    historydatas.airDeposiA = a[6]
+    historydatas.airDeposiB = a[7]
+    # print('list a',historydatas)
+    db.session.add(historydatas)
+    db.session.commit()
+print(list[3][1])
+
+listAirClogA = []
+listAirClogB = []
+listSizeNH3Actual = []
+listSizeNH3Demand = []
+listAirDeposiA = []
+listAirDeposiB = []
+
+for row in range(sheet.nrows - 1):
+    listAirClogA.append({0:list[row][1], 1:list[row][2]})
+    listAirClogB.append({0:list[row][1], 1:list[row][3]})
+    listSizeNH3Actual.append({0:list[row][1], 1:list[row][4]})
+    listSizeNH3Demand.append({0:list[row][1], 1:list[row][5]})
+    listAirDeposiA.append({0:list[row][1], 1:list[row][6]})
+    listAirDeposiB.append({0:list[row][1], 1:list[row][7]})
+
+@app.route('/api/getdrawAirClogChart', methods=['GET'])
+@auth.login_required
+def getdrawAirClogChart():
+    return jsonify({'code':200, 
+                   'listAirClogA':listAirClogA,
+                   'listAirClogB':listAirClogB,
+                #    'listSizeNH3Actual':listSizeNH3Actual,
+                #    'listSizeNH3Demand':listSizeNH3Demand,
+                #    'listAirDeposiA':listAirDeposiA,
+                #    'listAirDeposiB':listAirDeposiB
+                   })
+
+@app.route('/api/getdrawSizeNH3Chart', methods=['GET'])
+@auth.login_required
+def getdrawSizeNH3Chart():
+    return jsonify({'code':200, 
+                #    'listAirClogA':listAirClogA,
+                #    'listAirClogB':listAirClogB,
+                   'listSizeNH3Actual':listSizeNH3Actual,
+                   'listSizeNH3Demand':listSizeNH3Demand,
+                #    'listAirDeposiA':listAirDeposiA,
+                #    'listAirDeposiB':listAirDeposiB
+                   })
+
+@app.route('/api/getdrawAirDeposiChart', methods=['GET'])
+@auth.login_required
+def getdrawAirDeposiChart():
+    return jsonify({'code':200, 
+                #    'listAirClogA':listAirClogA,
+                #    'listAirClogB':listAirClogB,
+                #    'listSizeNH3Actual':listSizeNH3Actual,
+                #    'listSizeNH3Demand':listSizeNH3Demand,
+                   'listAirDeposiA':listAirDeposiA,
+                   'listAirDeposiB':listAirDeposiB
+                   })
 
 # 密码校验
 @auth.verify_password
@@ -213,6 +325,31 @@ def bathremove_user():
     else:
         return jsonify({'code': 500, 'msg': "未知错误"})
 
+# excel数据交互(还是没成功)
+@app.route('/data/', methods=['GET', 'POST'])
+@auth.login_required
+def filelist1():
+    print(request.files)
+    file = request.files['file']
+    print('file', type(file), file)
+    print(file.filename)    # 打印文件名
+ 
+    f = file.read()    #文件内容
+    data = xlrd.open_workbook(file_contents=f)
+    table = data.sheets()[0]
+    names = data.sheet_names()  # 返回book中所有工作表的名字
+    status = data.sheet_loaded(names[0])  # 检查sheet1是否导入完毕
+    print(status)
+    nrows = table.nrows  # 获取该sheet中的有效行数
+    ncols = table.ncols  # 获取该sheet中的有效列数
+    print(nrows)
+    print(ncols)
+    s = table.col_values(0)  # 第1列数据
+    for i in s:
+        ii = i.strip()
+        print(len(ii))
+    return 'OK'
+
 
 @app.route('/api/getdrawPieChart', methods=['GET'])
 @auth.login_required
@@ -238,23 +375,6 @@ def getdrawLineChart():
     grade_value = ['计算机学院', '管理学院', '艺术学院', '数学学院']  # 年级汇总
     profess_value = ['大一', '大二']  # 学院汇总
     grade_data = {'大一': [1, 0, 1, 1], '大二': [1, 1, 0, 0]}  # 年级各学院字典
-    # Infos = JoinInfos.query.all()
-    # for info in Infos:
-    #     if info.grade not in grade_value:
-    #         grade_value.append(info.grade)
-    #         grade_data[info.grade] = []
-    #     if info.profess not in profess_value:
-    #         profess_value.append(info.profess)
-    # for grade in grade_value:
-    #     for profess in profess_value:
-    #         grade_data[grade].append(0)
-    # for info in Infos:
-    #     for grade in grade_value:
-    #         for profess_local_num in range(0, len(profess_value)):
-    #             if info.profess == profess_value[profess_local_num] and info.grade == grade:
-    #                 grade_data[grade][profess_local_num] += 1
-    #             else:
-    #                 pass
     print(grade_value, profess_value, grade_data)
     return jsonify({'code': 200, 'profess_value': profess_value, 'grade_value': grade_value, 'grade_data': grade_data})
     # return jsonify({'code': 200, 'profess_value': [1,2,3], 'grade_value': [5,6,7], 'grade_data': {8,8,8})
