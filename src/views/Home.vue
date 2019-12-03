@@ -7,7 +7,6 @@
 			<el-col :span="2">
 				<div class="tools" @click.prevent="collapse">
 					<i class="fa fa-align-justify"></i>
-          <!-- <p 离线数据上传></p> -->
 				</div>
 			</el-col>
       <el-col :span="8">
@@ -92,7 +91,7 @@
 			</div>
 		</el-dialog>
   <!-- action="https://jsonplaceholder.typicode.com/posts/" -->
-  <!-- action="${base}/exp_excel" -->
+  <!-- action="http://localhost:7500/upload" -->
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
@@ -100,7 +99,8 @@
       <el-upload
         style="display:inline-block;"
         class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        
+        action="http://127.0.0.1:5000/api/upload"
         :limit="1"
         :on-exceed="handleExceed">
         <el-button size="small" type="primary">请选择要上传的文件</el-button>
@@ -231,6 +231,8 @@ export default {
         }
       });
     },
+    // const url = 'http://127.0.0.1:5000/static/excel/date_test.xlsx'; 
+    
     //折叠导航栏
     collapse: function() {
       this.collapsed = !this.collapsed;
@@ -243,7 +245,8 @@ export default {
     handleDowload() {
       // const url = 'https://download.teamviewer.com/download/TeamViewer_Setup.exe';
       const url = 'https://github.com/jiezho/rdkx/blob/rdkx_v0r20/src/data/excel/%E7%84%A6%E4%BD%9C%E6%95%B0%E6%8D%AE.xlsx?raw=true'
-      window.open(url,'_blank');
+      // window.open(url,'_blank');
+       window.location.href = url
     }
   },
   mounted() {

@@ -55,3 +55,7 @@ export const getdrawSizeNH3Chart = () => {
 export const getdrawAirDeposiChart = () => {
     return axios.get(`${base}/getdrawAirDeposiChart`);
 };
+
+export const upload = params => {
+    return axios.post(`${base}/upload`, params);
+};

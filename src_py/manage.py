@@ -18,13 +18,18 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 from passlib.apps import custom_app_context
 import flask_excel as excel
+from werkzeug import SharedDataMiddleware
+from werkzeug.utils import secure_filename
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 
 # r'/*' 是通配符，让本服务器所有的 URL 都允许跨域请求
-CORS(app, resources=r'/*')
+# cors = CORS(app, resources={r"/*": {"origins": "*"})
+# CORS(app, resources=r'/*')
+CORS(app, supports_credentials=True)
+
 app.config['SECRET_KEY'] = 'hard to guess string'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -200,32 +205,20 @@ def getdrawAirClogChart():
     return jsonify({'code':200, 
                    'listAirClogA':listAirClogA,
                    'listAirClogB':listAirClogB,
-                #    'listSizeNH3Actual':listSizeNH3Actual,
-                #    'listSizeNH3Demand':listSizeNH3Demand,
-                #    'listAirDeposiA':listAirDeposiA,
-                #    'listAirDeposiB':listAirDeposiB
                    })
 
 @app.route('/api/getdrawSizeNH3Chart', methods=['GET'])
 @auth.login_required
 def getdrawSizeNH3Chart():
     return jsonify({'code':200, 
-                #    'listAirClogA':listAirClogA,
-                #    'listAirClogB':listAirClogB,
                    'listSizeNH3Actual':listSizeNH3Actual,
                    'listSizeNH3Demand':listSizeNH3Demand,
-                #    'listAirDeposiA':listAirDeposiA,
-                #    'listAirDeposiB':listAirDeposiB
                    })
 
 @app.route('/api/getdrawAirDeposiChart', methods=['GET'])
 @auth.login_required
 def getdrawAirDeposiChart():
     return jsonify({'code':200, 
-                #    'listAirClogA':listAirClogA,
-                #    'listAirClogB':listAirClogB,
-                #    'listSizeNH3Actual':listSizeNH3Actual,
-                #    'listSizeNH3Demand':listSizeNH3Demand,
                    'listAirDeposiA':listAirDeposiA,
                    'listAirDeposiB':listAirDeposiB
                    })
@@ -251,6 +244,21 @@ def verify_password(name_or_token, password):
 def get_auth_token():
     token = g.admin.generate_auth_token()
     return jsonify({'code': 200, 'msg': "登录成功", 'token': token.decode('ascii'), 'name': g.admin.name})
+
+#test
+@app.route('/get', methods=['GET', 'POST'])
+def get():
+    name = request.args.get('name', '')
+    if name == 'xuefeilong':
+        age = 21
+    else:
+        age = 'valid name'
+    return jsonify(
+        data={name: age},
+        extra={
+            'total': '120'
+        }
+    )
 
 
 @app.route('/api/setpwd', methods=['POST'])
@@ -326,58 +334,38 @@ def bathremove_user():
         return jsonify({'code': 500, 'msg': "未知错误"})
 
 # excel数据交互(还是没成功)
-@app.route('/data/', methods=['GET', 'POST'])
-@auth.login_required
-def filelist1():
-    print(request.files)
-    file = request.files['file']
-    print('file', type(file), file)
-    print(file.filename)    # 打印文件名
+@app.route('/api/upload', methods=['GET', 'POST'])
+# @auth.login_required
+def upload():
+    if request.method == 'POST':
+        f = request.files['file']
+    basepath = os.path.dirname(__file__)
+    upload_path = os.path.join(basepath, '../static/excel', secure_filename(f.filename))
+    f.save(upload_path)
+    print("upload test ok")
+    # return "ok"
+    # return render_template('upload_ok.html')
+    # print(request.files)
+    # file = request.files['file']
+    # print('file', type(file), file)
+    print(f.filename)    # 打印文件名
  
-    f = file.read()    #文件内容
-    data = xlrd.open_workbook(file_contents=f)
-    table = data.sheets()[0]
-    names = data.sheet_names()  # 返回book中所有工作表的名字
-    status = data.sheet_loaded(names[0])  # 检查sheet1是否导入完毕
-    print(status)
-    nrows = table.nrows  # 获取该sheet中的有效行数
-    ncols = table.ncols  # 获取该sheet中的有效列数
-    print(nrows)
-    print(ncols)
-    s = table.col_values(0)  # 第1列数据
-    for i in s:
-        ii = i.strip()
-        print(len(ii))
+    # f = file.read()    #文件内容upload
+    # data = xlrd.open_workbook(file_contents=f)
+    # table = data.sheets()[0]
+    # names = data.sheet_names()  # 返回book中所有工作表的名字
+    # status = data.sheet_loaded(names[0])  # 检查sheet1是否导入完毕
+    # print(status)
+    # nrows = table.nrows  # 获取该sheet中的有效行数
+    # ncols = table.ncols  # 获取该sheet中的有效列数
+    # print(nrows)
+    # print(ncols)
+    # s = table.col_values(0)  # 第1列数据
+    # for i in s:
+    #     ii = i.strip()
+    #     print(len(ii))
     return 'OK'
 
-
-@app.route('/api/getdrawPieChart', methods=['GET'])
-@auth.login_required
-def getdrawPieChart():
-    # query = db.session.query
-    # Infos = query(JoinInfos)
-    # total = Infos.count()
-    total = 21
-    data_value = [1, 3, 2, 5, 2, 4, 4]  # 和下面组别一一对应
-    group_value = ['视觉', '视频', '前端', '办公', '后端', '运营', '移动']
-    # for info in Infos:
-    #     for num in range(0, 7):
-    #         if group_value[num] in info.group:
-    #             data_value[num] += 1
-    #         else:
-    #             pass
-    return jsonify({'code': 200, 'value': data_value, 'total': total})
-
-
-@app.route('/api/getdrawLineChart', methods=['GET'])
-@auth.login_required
-def getdrawLineChart():
-    grade_value = ['计算机学院', '管理学院', '艺术学院', '数学学院']  # 年级汇总
-    profess_value = ['大一', '大二']  # 学院汇总
-    grade_data = {'大一': [1, 0, 1, 1], '大二': [1, 1, 0, 0]}  # 年级各学院字典
-    print(grade_value, profess_value, grade_data)
-    return jsonify({'code': 200, 'profess_value': profess_value, 'grade_value': grade_value, 'grade_data': grade_data})
-    # return jsonify({'code': 200, 'profess_value': [1,2,3], 'grade_value': [5,6,7], 'grade_data': {8,8,8})
 
 @app.route('/api/getdrawStackedAreaChart', methods=['GET'])
 @auth.login_required
@@ -391,4 +379,4 @@ def unauthorized():
 
 if __name__ == '__main__':
     db.create_all()
-    app.run(host='0.0.0.0')
+    app.run(host='127.0.0.1',port=5000)

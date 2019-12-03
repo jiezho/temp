@@ -22,7 +22,7 @@
         <br>
         <el-row :gutter="10" type="flex" class="row-bg" justify="center" style="transform: translateY(-20px);"> 
             <el-col :span="12">
-                <div id="chartTxt" style="width:85%; height:150px; outline-style:ridge; background-color:#F0F2EE">
+                <div id="chartTxt" style="width:92%; height:150px; transform: translateY(-16px); outline-style:ridge; background-color:#F0F2EE">
                     <h1 style="font-family:verdana; color:#3399FF"> 专家建议：</h1>
                     <div class = "expertAdvice"> </div>
                     <body>
@@ -35,7 +35,7 @@
             </el-col>
             <el-col :span="12">
                 <div id="chartAlarm" style="width:100%; height:100px;text-align: center;
-                         padding-top: 30px;box-sizing: border-box;">
+                         padding-top: 30px;box-sizing: border-box; translateY(+20px)">
                     <el-popover
                         placement="top"
                         width="160"
