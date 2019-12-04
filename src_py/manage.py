@@ -24,15 +24,16 @@ from werkzeug.utils import secure_filename
 # app = Flask(__name__)
 from __init__ import app, db
 import SQLManage
+import excel2db
 Admin        = SQLManage.Admin
 JoinInfos    = SQLManage.JoinInfos
-HistoryData  = SQLManage.HistoryData
-listAirClogA = SQLManage.listAirClogA
-listAirClogB = SQLManage.listAirClogB
-listSizeNH3Actual = SQLManage.listSizeNH3Actual
-listSizeNH3Demand = SQLManage.listSizeNH3Demand
-listAirDeposiA = SQLManage.listAirDeposiA
-listAirDeposiB = SQLManage.listAirDeposiB
+HistoryData  = excel2db.HistoryData
+listAirClogA = excel2db.listAirClogA
+listAirClogB = excel2db.listAirClogB
+listSizeNH3Actual = excel2db.listSizeNH3Actual
+listSizeNH3Demand = excel2db.listSizeNH3Demand
+listAirDeposiA = excel2db.listAirDeposiA
+listAirDeposiB = excel2db.listAirDeposiB
 
 # r'/*' 是通配符，让本服务器所有的 URL 都允许跨域请求
 CORS(app, resources=r'/*')

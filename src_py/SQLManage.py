@@ -16,6 +16,7 @@ import flask_excel as excel
 from werkzeug import SharedDataMiddleware
 from werkzeug.utils import secure_filename
 from __init__ import app, db
+import excel2db
 
 # 创建导入的数据数据库模型
 class JoinInfos(db.Model):
@@ -40,7 +41,7 @@ class JoinInfos(db.Model):
             result[key] = value
         return result
 
-# ‘登录用户’数据库模型
+
 class Admin(db.Model):
     __tablename__ = 'admins'
     id = db.Column(db.Integer, primary_key=True)
@@ -73,29 +74,6 @@ class Admin(db.Model):
         admin = Admin.query.get(data['id'])
         return admin
  
-# 创建excel导入的runtime数据数据库模型
-class HistoryData(db.Model):
-    __tablename__ = 'historyDatas'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    time = db.Column(db.DateTime, default=datetime.now())
-    airClogA = db.Column(db.Float)
-    airClogB = db.Column(db.Float)
-    sizeNH3Actual = db.Column(db.Float)
-    sizeNH3Demand = db.Column(db.Float)
-    airDeposiA = db.Column(db.Float)
-    airDeposiB = db.Column(db.Float)
-
-    def to_dict(self):
-        columns = self.__table__.columns.keys()
-        result = {}
-        for key in columns:
-            if key == 'time':
-                value = getattr(self, key).strftime("%Y-%m-%d %H:%M:%S")
-            else:
-                value = getattr(self, key)
-            result[key] = value
-        return result
-    
 db.drop_all()
 db.create_all()
 
@@ -104,6 +82,7 @@ rdkx_user = Admin(id="8",name="rdkx",password="$5$rounds=535000$9WoOVzcj7Fvi3FsJ
 db.session.add(rdkx_user)
 db.session.commit()
 
+# ‘登录用户’数据库模型
 infos1 = JoinInfos(id='1', name='机组负荷', groupA='421.88', groupB='421.88', unit='MW')
 infos2 = JoinInfos(id='2', name='烟气侧压差', groupA='1100', groupB='930', unit='Pa')
 infos3 = JoinInfos(id='3', name='堵塞系数', groupA='1.248', groupB='1.055', unit='')
@@ -114,55 +93,3 @@ infos7 = JoinInfos(id='7', name='沉积系数', groupA='62334', groupB='60891', 
 infos8 = JoinInfos(id='8', name='沉积系数12天均值', groupA='73776', groupB='70818', unit='')
 db.session.add_all([infos1, infos2, infos3, infos4, infos5, infos6, infos7, infos8])
 db.session.commit()
-
-# excel数据导入到数据库
-dataPath = '../src/data/excel'
-runtimeData = xlrd.open_workbook(dataPath+'/焦作数据.xlsx')
-sheet = runtimeData.sheet_by_name('historyData')
-table = runtimeData.sheet_by_name(u'historyData')
-list = []
-for row in range(sheet.nrows):
-    rowlist = []
-    for col in range(sheet.ncols):
-        value = sheet.cell(row,col).value        
-        if sheet.cell(row,col).ctype == 3:            
-            date = xldate_as_tuple(sheet.cell(row,col).value,0)            
-            value = datetime(*date)  # excel中读取时间格式数据要注意      
-            # print('value',value)
-        rowlist.append(value)
-    list.append(rowlist)
-
-del list[0] #删掉第一行，第一行获取的是文件的头，一般不用插到数据库里面
-# print('list', list)
-    # 将数据存入数据库
-for a in list:
-    historydatas = HistoryData()
-    historydatas.id = a[0]
-    # historydatas.time = a[1].to_dict()
-    historydatas.time = a[1]
-    # print('historydatas.time',historydatas.time)
-    historydatas.airClogA = a[2]
-    historydatas.airClogB = a[3]
-    historydatas.sizeNH3Actual = a[4]
-    historydatas.sizeNH3Demand = a[5]
-    historydatas.airDeposiA = a[6]
-    historydatas.airDeposiB = a[7]
-    # print('list a',historydatas)
-    db.session.add(historydatas)
-    db.session.commit()
-print(list[3][1])
-
-listAirClogA = []
-listAirClogB = []
-listSizeNH3Actual = []
-listSizeNH3Demand = []
-listAirDeposiA = []
-listAirDeposiB = []
-
-for row in range(sheet.nrows - 1):
-    listAirClogA.append({0:list[row][1], 1:list[row][2]})
-    listAirClogB.append({0:list[row][1], 1:list[row][3]})
-    listSizeNH3Actual.append({0:list[row][1], 1:list[row][4]})
-    listSizeNH3Demand.append({0:list[row][1], 1:list[row][5]})
-    listAirDeposiA.append({0:list[row][1], 1:list[row][6]})
-    listAirDeposiB.append({0:list[row][1], 1:list[row][7]})
