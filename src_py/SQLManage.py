@@ -93,3 +93,4 @@ infos7 = JoinInfos(id='7', name='沉积系数', groupA='62334', groupB='60891', 
 infos8 = JoinInfos(id='8', name='沉积系数12天均值', groupA='73776', groupB='70818', unit='')
 db.session.add_all([infos1, infos2, infos3, infos4, infos5, infos6, infos7, infos8])
 db.session.commit()
+
