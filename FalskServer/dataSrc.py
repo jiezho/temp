@@ -53,7 +53,8 @@ for row in range(sheet.nrows - 1):
     print("建立第%d连接" % (row+1))
     for col in range(sheet.ncols):
         # s.sendto(str(list[row][col]).encode("utf-8"), addr)
-        s.send(str(list[row][col]).encode("utf-8"))
+        srcData = "rc"+(str(row)+str(col)+"data"+str(list[row][col]))
+        s.send(srcData.encode("utf-8"))
         print("send data list[%d][%d]:" % (row, col),list[row][col])
         time.sleep(1)
     s.close()

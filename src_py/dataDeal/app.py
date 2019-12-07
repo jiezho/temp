@@ -1,15 +1,39 @@
 #!/usr/bin/python3
 #coding=utf-8
+import os
+import re
+import json
 import threading
 import time
 import socket
 import queue
 from datetime import datetime
+from flask import Flask, g, jsonify, make_response, request
+from flask_sqlalchemy import SQLAlchemy
+import data2db
+from data2db import WorkerThread
 
 hostIP = '127.0.0.1'
 exitFlag = 0
-encoding = 'utf-8'
 BUFSIZE = 1024
+encoding = 'utf-8'
+# def product(bq):
+#     str_tuple = ("Python", "Kotlin", "Swift")
+#     for i in range(99999):
+#         print(threading.current_thread().name + "生产者准备生产元组元素！")
+#         time.sleep(0.2)
+#         # 尝试放入元素，如果队列已满，则线程被阻塞
+#         bq.put(str_tuple[i % 3])
+#         print(threading.current_thread().name \
+#             + "生产者生产元组元素完成！")
+# def consume(bq):
+#     while True:
+#         print(threading.current_thread().name + "消费者准备消费元组元素！")
+#         time.sleep(0.2)
+#         # 尝试取出元素，如果队列已空，则线程被阻塞
+#         t = bq.get()
+#         print(threading.current_thread().name \
+#             + "消费者消费[ %s ]元素完成！" % t)
 
 # a read thread, read data from remote
 class Reader(threading.Thread):
@@ -27,17 +51,17 @@ class Reader(threading.Thread):
                 break
         print("close:", self.client.getpeername())
         
-    def readline(self):
-        rec = self.inputs.readline()
-        if rec:
-            string = bytes.decode(rec, encoding)
-            if len(string)>2:
-                string = string[0:-2]
-            else:
-                string = ' '
-        else:
-            string = False
-        return string
+    # def readline(self):
+    #     rec = self.inputs.readline()
+    #     if rec:
+    #         string = bytes.decode(rec, encoding)
+    #         if len(string)>2:
+    #             string = string[0:-2]
+    #         else:
+    #             string = ' '
+    #     else:
+    #         string = False
+    #     return string
  
 # a listen thread, listen remote connect
 # when a remote machine request to connect, it will create a read thread to handle
@@ -56,7 +80,15 @@ class Listener(threading.Thread):
             client, cltadd = self.sock.accept()
             try:
                 client.settimeout(50)
-                Reader(client).start()
+                # Reader(client).start()
+                w = WorkerThread(client)
+                w.start()
+                w.receiveData(BUFSIZE,client)
+                # WorkerThread(client).receiveData(client)
+                # w.start()
+                # w.send("hahahahah")
+                # test.WorkerThread(client).receiveData("Listener Receive",client)
+                # test.WorkerThread(client).receiveData()
                 cltadd = cltadd
                 print("accept a connect")
             except socket.timeout: #如果建立连接后，该连接在设定的时间内无数据发来，则time out
@@ -122,22 +154,25 @@ threadLock = threading.Lock()
 threads = []
 
 # 创建新线程实例
-thread1 = myThread(1, "Thread-1", 1)
-thread2 = myThread(2, "Thread-2", 2)
+# thread1 = myThread(1, "Thread-1", 1)
+# thread2 = myThread(2, "Thread-2", 2)
 # thread3 = socketThread(3, "SocketThread", 30, 10000)
 lstThread  = Listener(10000)   # create a listen thread
+# w = WorkerThread(Listener.client)
 
 # 开启新线程
-thread1.start()
-thread2.start()
+# thread1.start()
+# thread2.start()
 # thread3.start()
 lstThread.start() # then start
+# w.start()
 
 # 添加线程到线程列表
-threads.append(thread1)
-threads.append(thread2)
+# threads.append(thread1)
+# threads.append(thread2)
 # threads.append(thread3)
 threads.append(lstThread)
+# threads.append(w)
 
 # 等待所有线程完成
 for t in threads:
