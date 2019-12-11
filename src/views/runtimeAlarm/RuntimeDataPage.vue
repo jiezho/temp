@@ -63,6 +63,14 @@
                     </el-popover> -->
 
                     <el-button @click="showConfirm">空预器堵塞预警</el-button>
+                    <p style="margin-top:10px;"></p>
+                    <el-date-picker
+                      v-model="date"
+                      type="datetime"
+                      value-format="yyyy-MM-dd HH:mm:ss"
+                      placeholder="选择日期时间">
+                    </el-date-picker>
+                    <el-button @click="checkRecord">查看历史数据</el-button>
                 </div>
             </el-col>
         </el-row>
@@ -74,7 +82,7 @@
 import echarts from "echarts";
 import util from "../../common/js/util";
 import { getdrawPieChart, getdrawStackedAreaChart } from "../../api/api";
-import { getUserListPage, removeUser, batchRemoveUser } from "../../api/api";
+import { getUserListPage, removeUser, batchRemoveUser, getDataPoints} from "../../api/api";
 export default {
     name: 'runtime',
     data() {
@@ -91,22 +99,23 @@ export default {
         timer: null,
         timer2: null,
         timer3: null,
-        point1: [300, 3],
-        point2: [350, 2],
+        point1: [],
+        point2: [],
         suggestion: ['1,提高吹灰频次', '2,调整燃煤硫分','3,提高空预器入口风温'],
-        showIcon: false
+        showIcon: false,
+        date: ''
       }
     },
     mounted() {
-      // clearInterval(this.timer)
-      // this.timer = setInterval(()=>{
-      //   this.getUsers();
-      // }, 1000)
+      clearInterval(this.timer)
+      this.timer = setInterval(()=>{
+        this.getUsers();
+      }, 1000)
 
-      // clearInterval(this.timer2)
-      // this.timer = setInterval(()=>{
-      //   this.getPoint();
-      // }, 1000)
+      clearInterval(this.timer2)
+      this.timer = setInterval(()=>{
+        this.getPoint();
+      }, 1000)
 
       this.drawStackedAreaChart();
 
@@ -136,8 +145,11 @@ export default {
         clearInterval(this.timer3)
         this.showIcon = false
       },
+      checkRecord() { // 查看历史数据
+        const date = this.date // 时间
+      },
       showConfirm() {
-        this.$confirm('你是否确认已注意到预警，并关闭提示吗？', '提示', {
+        this.$confirm('您是否确认已注意到预警，并关闭提示吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -163,6 +175,13 @@ export default {
           this.page_size = res.data.page_size;
           this.users = res.data.infos;
           this.listLoading = false;
+        });
+      },
+      //获取不同负荷下烟气侧压力oint
+      getPoints() {
+        getDataPoints(para).then(res => {
+          this.point1 = res.point1;
+          this.point2 = res.point2;
         });
       },
       //画实时曲线图
